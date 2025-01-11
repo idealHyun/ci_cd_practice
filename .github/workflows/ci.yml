@@ -31,7 +31,7 @@ jobs: # 할 작업들을 정의
       - name: Docker Login
         uses: docker/login-action@v2.2.0
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKER_USER_EMAIL }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # 5. Docker 이미지 빌드 및 푸시
@@ -40,7 +40,7 @@ jobs: # 할 작업들을 정의
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-app:latest
+          tags: ${{ secrets.DOCKER_NICKNAME }}/spring-boot-app:latest
 
       # 6. EC2 배포
       - name: Deploy to EC2 with Docker Compose
