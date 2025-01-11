@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   spring-boot-app:
-    image: your-dockerhub-username/spring-boot-app:latest
+    image: ${DOCKER_NICKNAME}/spring-boot-app:latest
     container_name: spring-boot-app
     ports:
       - "8080:8080"
