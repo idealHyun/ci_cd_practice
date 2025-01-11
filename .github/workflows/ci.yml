@@ -45,7 +45,7 @@ jobs: # 할 작업들을 정의
 
       # 6. Docker Compose 파일을 EC2로 업로드
       - name: Upload docker-compose.yml to EC2
-        uses: appleboy/scp-action@v0.1.10
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
