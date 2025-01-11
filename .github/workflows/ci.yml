@@ -51,7 +51,7 @@ jobs: # 할 작업들을 정의
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           source: ./docker-compose.yml
-          target: /home/ubuntu/ci_cd_practice/docker-compose.yml
+          target: /home/ubuntu/ci_cd_practice
 
       # 7. EC2에서 Docker Compose 실행
       - name: Deploy to EC2 with Docker Compose
