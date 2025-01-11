@@ -53,7 +53,26 @@ jobs: # 할 작업들을 정의
           source: ./docker-compose.yml
           target: /home/ubuntu/ci_cd_practice
 
-      # 7. EC2에서 Docker Compose 실행
+      # 7. .env 파일 생성
+      - name: Create .env file
+        run: |
+          echo "DOCKER_NICKNAME=${{ secrets.DOCKER_NICKNAME }}" >> .env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+
+      # 8. .env 파일을 EC2로 업로드
+      - name: Upload .env file to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: .env
+          target: /home/ubuntu/ci_cd_practice
+
+      # 9. EC2에서 Docker Compose 실행
       - name: Deploy to EC2 with Docker Compose
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -62,11 +81,6 @@ jobs: # 할 작업들을 정의
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/ci_cd_practice
-            DOCKER_NICKNAME=${{ secrets.DOCKER_NICKNAME }} \
-            MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} \
-            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
-            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
-            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }} \
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
+            sudo docker-compose down 
+            sudo docker-compose pull
+            sudo docker-compose up -d
