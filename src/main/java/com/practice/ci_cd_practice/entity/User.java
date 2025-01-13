@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
     private Long id;
 
     @Column(nullable=false)
@@ -19,4 +20,9 @@ public class User {
 
     @Column(unique=true, nullable=false)
     private String email;
+
+    public User(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
 }
