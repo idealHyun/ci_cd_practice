@@ -15,7 +15,7 @@ services:
       - app-network
 
   mysql-container:
-    image: mysql:latest
+    image: mysql:9.2
     container_name: mysql-container
     restart: always
     environment:
