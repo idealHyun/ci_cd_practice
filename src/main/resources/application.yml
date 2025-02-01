@@ -3,7 +3,7 @@ spring:
     name: ci_cd_practice
 
   datasource:
-    url: jdbc:mysql://localhost:3306/mydb
+    url: jdbc:mysql://mysql-container:3306/mydb
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,6 +12,9 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        type: trace
 
   data:
     jdbc:
