@@ -53,6 +53,12 @@ jobs: # 할 작업들을 정의
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
 
+      - name: Check if .env and docker-compose.yml exist
+        run: |
+          pwd
+          ls -l
+          ls -l .env docker-compose.yml
+
       # .env 파일과 docker compose 파일 EC2로 업로드
       - name: Upload .env file to EC2
         uses: appleboy/scp-action@v0.1.7
