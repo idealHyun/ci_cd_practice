@@ -10,31 +10,32 @@ jobs: # 할 작업들을 정의
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 현재 저장소의 코드를 클론
+      # 현재 저장소의 코드를 클론
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Java JDK 21을 설치
+      # Java JDK 21을 설치
       - name: Install Java JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: gradle
 
-      # 3. Gradle 빌드
+      # Gradle 빌드
       - name: Gradle Build
         run: |
           chmod +x gradlew
           ./gradlew clean build
 
-      # 4. Docker 로그인
+      # Docker 로그인
       - name: Docker Login
         uses: docker/login-action@v2.2.0
         with:
           username: ${{ secrets.DOCKER_USER_EMAIL }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 5. Docker 이미지 빌드 및 푸시
+      # Docker 이미지 빌드 및 푸시
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -43,17 +44,7 @@ jobs: # 할 작업들을 정의
           push: true
           tags: ${{ secrets.DOCKER_NICKNAME }}/spring-boot-app:latest
 
-      # 6. Docker Compose 파일을 EC2로 업로드
-      - name: Upload docker-compose.yml to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: ./docker-compose.yml
-          target: /home/ubuntu/ci_cd_practice
-
-      # 7. .env 파일 생성
+      # .env 파일 생성
       - name: Create .env file
         run: |
           echo "DOCKER_NICKNAME=${{ secrets.DOCKER_NICKNAME }}" >> .env
@@ -62,14 +53,16 @@ jobs: # 할 작업들을 정의
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
 
-      # 8. .env 파일을 EC2로 업로드
+      # .env 파일과 docker compose 파일 EC2로 업로드
       - name: Upload .env file to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: .env
+          source: |
+            ./docker-compose.yml
+            ./.env
           target: /home/ubuntu/ci_cd_practice
 
       # 9. EC2에서 Docker Compose 실행
@@ -81,7 +74,7 @@ jobs: # 할 작업들을 정의
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/ci_cd_practice
-            sudo docker-compose down
+            sudo docker-compose down --remove-orphans
             sudo docker image prune -af
             sudo docker-compose pull
-            sudo docker-compose up -d
+            sudo docker-compose up -d --remove-orphans
