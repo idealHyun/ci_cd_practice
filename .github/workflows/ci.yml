@@ -47,7 +47,7 @@ jobs: # 할 작업들을 정의
       # .env 파일 생성
       - name: Create .env file
         run: |
-          echo "DOCKER_NICKNAME=${{ secrets.DOCKER_NICKNAME }}" >> .env
+          echo "DOCKER_NICKNAME=${{ secrets.DOCKER_NICKNAME }}" > .env
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
